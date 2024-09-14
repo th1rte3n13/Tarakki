@@ -85,3 +85,8 @@ def dashboard_profile(request):
 
 def dashboard_settings(request):
     return render(request, 'dashboard/settings.html')
+
+
+def dashboard_test(request):
+    context = {'greeting':'Hello, World!'}
+    return render(request, 'dashboard/dash-test.html',context)
