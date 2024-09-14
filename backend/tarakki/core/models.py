@@ -81,3 +81,17 @@ class MentorProfile(models.Model):
 class TestResults(models.Model):
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
 
+
+
+
+
+
+
+class Question(models.Model):
+    parameter = models.CharField(max_length=50)
+    question_text = models.TextField()
+    option_a = models.CharField(max_length=255)
+    option_b = models.CharField(max_length=255)
+    option_c = models.CharField(max_length=255)
+    option_d = models.CharField(max_length=255)
+    correct_option = models.CharField(max_length=1)

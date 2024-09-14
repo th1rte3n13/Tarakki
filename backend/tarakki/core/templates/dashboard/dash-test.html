@@ -1,9 +1,44 @@
-{% extends 'dashboard/dash-base.html' %}
+{% extends "dashboard/dash-base.html" %}
+{% load static %}
+
+{% block head %}
+    <!-- Include your custom CSS file -->
+    <link rel="stylesheet" href="{% static '/css/aptitude_test.css' %}" type="text/css">
+    {{ block.super }}
+{% endblock %}
 
 {% block content %}
-<div class="bg-white p-6 rounded-lg shadow-lg">
-    <h2 class="text-xl font-bold mb-4">Test</h2>
-    <p>This is your Test page. </p>
-    {{greeting}}
-</div>
+    <h2>Aptitude Test</h2>
+
+    {% if score %}
+        <h3>Your Score: {{ score }}</h3>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {% for question in questions %}
+                <div>
+                    <p><strong>{{ question.parameter }}:</strong> {{ question.question_text }}</p>
+                    <label>
+                        <input type="radio" name="question_{{ forloop.counter0 }}" value="A"> {{ question.option_a }}
+                    </label><br>
+                    <label>
+                        <input type="radio" name="question_{{ forloop.counter0 }}" value="B"> {{ question.option_b }}
+                    </label><br>
+                    <label>
+                        <input type="radio" name="question_{{ forloop.counter0 }}" value="C"> {{ question.option_c }}
+                    </label><br>
+                    <label>
+                        <input type="radio" name="question_{{ forloop.counter0 }}" value="D"> {{ question.option_d }}
+                    </label><br>
+                </div>
+            {% endfor %}
+            <button type="submit">Submit Test</button>
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+    <!-- Include your custom JS file -->
+    <script src="{% static 'js/aptitude_test.js' %}"></script>
+    {{ block.super }}
 {% endblock %}
