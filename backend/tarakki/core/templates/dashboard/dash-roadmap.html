@@ -1,0 +1,23 @@
+{% extends 'dashboard/dash-base.html' %} 
+{% block content %}
+<div class="p-6 rounded-lg bg-gradient-to-b from-gray-200 via-gray-300 to-gray-400">
+    <h1 class="font-bold text-[30px]">RoadMap</h1>
+    <div class="relative max-w-[1200px] m-[100px] m-auto space-y-6 ">
+        {% for item in items%}
+        <div class="flex  px-[10px] py-[50px] w-full {% if forloop.counter|divisibleby:2 %}flex-row-reverse{% else %}flex-row{% endif %}">
+            <div class="w-[50%] bg-gray-300 px-[10px] py-[30px] rounded-lg bg-white text-[15px] ">
+                <h2 class="font-bold text-[20px]">{{item.title}}</h2>
+                <small class="text-gray-800">hello</small>
+                <p>
+                    the vejfh hjhjhs fd jsdga dghj ahdgj hajdgh ajg jagd hd dagj g ahdgj
+                    had aidhgie h ag ga ejk gjke jgikq gjei jaidg jidg jaijdigajiegjiej
+                    e ajeif jgia jeg
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+        
+        
+    </div>
+</div>
+{% endblock %}
