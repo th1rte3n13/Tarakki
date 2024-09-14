@@ -83,17 +83,22 @@ def dashboard_home(request):
 def dashboard_roadmap(request):
     context = {'items':[
     {
-        'step': 1,
         'title': 'Alpha Corp',
         'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla fermentum, turpis ac vestibulum aliquam, lacus felis.'
     },
     {
-        'step': 2,
         'title': 'Beta LLC',
         'description': 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.'
     },
     {
-        'step': 3,
+        'title': 'Gamma Inc',
+        'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
+    },
+    {
+        'title': 'Gamma Inc',
+        'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
+    },
+    {
         'title': 'Gamma Inc',
         'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
     }
