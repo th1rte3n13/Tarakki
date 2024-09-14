@@ -84,8 +84,31 @@ def dashboard_home(request):
     context = {'chart': chart}
     return render(request, 'dashboard/dash-home.html',context)
 
-def dashboard_profile(request):
-    return render(request, 'dashboard/profile.html')
+def dashboard_roadmap(request):
+    context = {'items':[
+    {
+        'title': 'Alpha Corp',
+        'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla fermentum, turpis ac vestibulum aliquam, lacus felis.'
+    },
+    {
+        'title': 'Beta LLC',
+        'description': 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.'
+    },
+    {
+        'title': 'Gamma Inc',
+        'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
+    },
+    {
+        'title': 'Gamma Inc',
+        'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
+    },
+    {
+        'title': 'Gamma Inc',
+        'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
+    }
+]
+}
+    return render(request, 'dashboard/dash-roadmap.html',context)
 
 def dashboard_settings(request):
     return render(request, 'dashboard/settings.html')
