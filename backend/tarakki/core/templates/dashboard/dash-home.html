@@ -1,0 +1,8 @@
+{% extends 'dashboard/dash-base.html' %}
+
+{% block content %}
+<div class="bg-white p-6 shadow-lg rounded-lg">
+    <div class="text-gray-600 text-lg font-semibold">Welcome, Melbin</div>
+    {{chart | safe}}
+</div>
+{% endblock %}
