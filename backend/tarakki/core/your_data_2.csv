@@ -84,7 +84,7 @@ E_score,Do you feel enthusiastic in social settings?,Strongly Disagree,Disagree,
 E_score,Do you enjoy being spontaneous with friends?,Strongly Disagree,Disagree,Agree,Strongly Agree,D
 E_score,Do you like to make plans for social gatherings?,Strongly Disagree,Disagree,Agree,Strongly Agree,D
 E_score,Do you feel invigorated after social interactions?,Strongly Disagree,Disagree,Agree,Strongly Agree,D
-E_score,Socializing drains my energy, and I prefer to avoid it.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
+E_score,Socializing drains my energy and I prefer to avoid it.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
 E_score,I feel uncomfortable in social gatherings and prefer solitude.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
 E_score,Initiating conversations with strangers is something I avoid.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
 E_score,I do not enjoy being the center of attention.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
@@ -113,7 +113,7 @@ A_score,Do you strive to maintain harmony in your relationships?,Strongly Disagr
 A_score,Do you believe in resolving conflicts through compromise?,Strongly Disagree,Disagree,Agree,Strongly Agree,D
 A_score,Do you often engage in acts of kindness?,Strongly Disagree,Disagree,Agree,Strongly Agree,D
 A_score,Do you find it easy to connect with others emotionally?,Strongly Disagree,Disagree,Agree,Strongly Agree,D
-A_score,I usually prioritize my needs over others', even at the expense of others.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
+A_score,I usually prioritize my needs over others' even at the expense of others.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
 A_score,I tend to hold grudges and find it difficult to forgive.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
 A_score,I often think that other people's problems are not my concern.,Strongly Disagree,Disagree,Agree,Strongly Agree,A
 A_score,I believe it is unnecessary to be polite to people I don't know.,Strongly Disagree,Disagree,Agree,Strongly Agree,A

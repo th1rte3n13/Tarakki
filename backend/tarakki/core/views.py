@@ -14,6 +14,13 @@ from .models import User, StudentProfile
 import os
 import csv
 import logging
+import uuid
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.core.exceptions import ValidationError
+import json
+from django.views.decorators.csrf import csrf_exempt
+
 logger = logging.getLogger(__name__)
 
 import plotly.express as px
@@ -114,29 +121,15 @@ def dashboard_settings(request):
     return render(request, 'dashboard/settings.html')
 
 
-# def dashboard_test(request):
-#     context = {'greeting':'Hello, World!'}
-#     return render(request, 'dashboard/dash-test.html',context)
-
-
-
-
-
-
-
-
-
-
 
 
 
 def load_questions():
     # Dictionary to store questions by parameter
     questions_by_param = {}
-
-    # Path to the CSV file
     csv_file_path = os.path.join(os.path.dirname(__file__), 'your_data_2.csv')  # Adjust path if needed
-    
+
+    # Reading the CSV and categorizing questions by parameter
     with open(csv_file_path, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -160,52 +153,161 @@ def load_questions():
 
     return selected_questions
 
+def start_test(request):
+    # This is where we start the test and display the questions
+    if request.method == 'GET':
+        questions = load_questions()
+        test_id = str(uuid.uuid4())
+        request.session['questions'] = questions  # In start_test
+        # return render(request, 'dashboard/dash-test.html', {'questions': questions})
+        return JsonResponse({'test_id': test_id,'questions': questions})  # Ensure this returns JSON
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
+def validate_option(option,options):
+    # valid_options = ["A", "B", "C", "D"]
+    return option in options
+
 def calculate_score(answers, correct_options, options):
     logger.info(f'Answers: {answers}, Correct Options: {correct_options}, Options: {options}')
-    
-    if any(not validate_option(answer) for answer in answers) or not validate_option(correct_options[0]):
+
+    if any(not validate_option(answer, options) for answer in answers) or any(not validate_option(correct_option, options) for correct_option in correct_options):
         logger.error(f'Invalid option detected - Answers: {answers}, Correct Options: {correct_options}')
         raise ValidationError('Invalid answer or correct option')
 
-    total_score = 0
-    if options == ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"]:
-        score_map = {
-            "A": {"A": 1, "B": 0.75, "C": 0.5, "D": 0.25},
-            "B": {"A": 0.25, "B": 1, "C": 0.75, "D": 0.5},
-            "C": {"A": 0.25, "B": 0.5, "C": 1, "D": 0.75},
-            "D": {"A": 0.25, "B": 0.5, "C": 0.75, "D": 1}
-        }
-        for answer, correct_option in zip(answers, correct_options):
-            total_score += score_map.get(correct_option, {}).get(answer, 0)
-    else:
-        total_score = sum(1 for answer, correct_option in zip(answers, correct_options) if answer == correct_option)
-    
-    return total_score
+    score = 0
+    score_map = {
+        "A": {"A": 1, "B": 0.75, "C": 0.5, "D": 0.25},
+        "B": {"A": 0.25, "B": 1, "C": 0.75, "D": 0.5},
+        "C": {"A": 0.25, "B": 0.5, "C": 1, "D": 0.75},
+        "D": {"A": 0.25, "B": 0.5, "C": 0.75, "D": 1}
+    }
+    for answer, correct_option in zip(answers, correct_options):
+        if answer is None:
+            continue  # Skip scoring for unanswered questions
 
-def validate_option(option):
-    # Add your own validation logic for options
-    valid_options = ["A", "B", "C", "D"]
-    if option not in valid_options:
-        return False
-    return True
+    for answer, correct_option in zip(answers, correct_options):
+        if options == ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"]:
+            score += score_map.get(correct_option, {}).get(answer, 0)
+        else:
+            score += 1 if answer == correct_option else 0
 
-# The test view logic
-def dashboard_test(request):
+    return score  # Only return the score for this parameter
+
+
+def submit_test(request):
     if request.method == 'POST':
-        # Process the submitted answers
-        answers = []
-        correct_options = []
-        questions = load_questions()
+        questions = request.session.get('questions', [])
+        if not questions:
+            return JsonResponse({'error': 'No questions found in session'}, status=400)
+
+        data = json.loads(request.body)
+        print("Data: ",data)
+        answers = data['answers']
+        print("Answers: ",answers)
+
+        if not answers:
+            return JsonResponse({'error': 'No answers submitted'}, status=400)
+
+        # Initialize scores for each parameter
+        scores = {param: 0 for param in [
+            'O_score', 'C_score', 'E_score', 'A_score', 'N_score',
+            'Numerical_Aptitude', 'Spatial_Aptitude', 'Perceptual_Aptitude',
+            'Abstract_Reasoning', 'Verbal_Reasoning'
+        ]}
+
+        correct_options_by_param = {param: [] for param in scores}
+        answers_by_param = {param: [] for param in scores}
+
+        # Group answers and correct options by parameter
         for i, question in enumerate(questions):
-            user_answer = request.POST.get(f'question_{i}')
-            answers.append(user_answer)
-            correct_options.append(question['correct_option'])
-        
-        # Calculate score
-        total_score = calculate_score(answers, correct_options, ["A", "B", "C", "D"])  # Pass the options list
-        return render(request, 'dashboard/dash-test.html', {'score': total_score, 'questions': questions})
-    
+            param = question['parameter']
+            correct_options_by_param[param].append(question['correct_option'])
+            answers_by_param[param].append(answers[i])
+
+        print("Answers by parameter: ",answers_by_param)
+        print("Correct option by parameter: ",correct_options_by_param)
+        # Calculate the score for each parameter separately
+        for param in scores:
+            scores[param] = calculate_score(
+                answers_by_param[param],
+                correct_options_by_param[param],
+                ["A", "B", "C", "D"]
+            )
+        print("Scores: ",scores)
+        qualities = determine_qualities(scores)
+        print("Qualities: ",qualities)
+        # Return only individual parameter scores (no total_score calculation)
+        return JsonResponse({'scores': scores,'qualities':qualities})
     else:
-        # Load questions for a new test
-        questions = load_questions()
-        return render(request, 'dashboard/dash-test.html', {'questions': questions})
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+
+
+def determine_qualities(scores):
+    qualities = []
+
+    # 1. Innovative Thinker
+    if scores['O_score'] > 8 and scores['Abstract_Reasoning'] > 8 and scores['Verbal_Reasoning'] > 7:
+        qualities.append('Innovative Thinker')
+    
+    # 2. Analytical
+    if scores['Numerical_Aptitude'] > 8 and scores['C_score'] > 8 and scores['Abstract_Reasoning'] > 7:
+        qualities.append('Analytical')
+    
+    # 3. Practical Problem-Solver
+    if scores['N_score'] > 7 and scores['Spatial_Aptitude'] > 8 and scores['Perceptual_Aptitude'] > 6:
+        qualities.append('Practical Problem-Solver')
+    
+    # 4. Communicative Leader
+    if scores['E_score'] > 8 and scores['Verbal_Reasoning'] > 8 and scores['A_score'] > 6:
+        qualities.append('Communicative Leader')
+
+    # 5. Creative Visionary
+    if scores['O_score'] > 8 and scores['Spatial_Aptitude'] > 7 and scores['Abstract_Reasoning'] > 8:
+        qualities.append('Creative Visionary')
+
+    # 6. Detail-Oriented
+    if scores['C_score'] > 8 and scores['Perceptual_Aptitude'] > 7:
+        qualities.append('Detail-Oriented')
+
+    # 7. Strategic Thinker
+    if scores['Abstract_Reasoning'] > 8 and scores['Verbal_Reasoning'] > 7 and scores['Numerical_Aptitude'] > 7:
+        qualities.append('Strategic Thinker')
+
+    # 8. Technically Proficient
+    if scores['Numerical_Aptitude'] > 8 and scores['Spatial_Aptitude'] > 7:
+        qualities.append('Technically Proficient')
+
+    # 9. Adaptive
+    if scores['O_score'] > 7 and scores['A_score'] > 7:
+        qualities.append('Adaptive')
+
+    # 10. Logical Thinker
+    if scores['Numerical_Aptitude'] > 8 and scores['C_score'] > 8:
+        qualities.append('Logical Thinker')
+
+    # 11. Collaborative
+    if scores['E_score'] > 7 and scores['A_score'] > 7:
+        qualities.append('Collaborative')
+
+    # 12. Resilient
+    if scores['N_score'] > 8 and scores['A_score'] > 6:
+        qualities.append('Resilient')
+
+    # Consider secondary or overlapping qualities
+    if scores['O_score'] > 7 and scores['C_score'] > 7:
+        qualities.append('Balanced')
+
+    if scores['A_score'] > 8 and scores['N_score'] < 6:
+        qualities.append('Emotionally Stable')
+    
+    if not qualities:
+        qualities.append("Balanced")  # Default if no specific qualities match
+    
+    return qualities
+
+
+def dashboard_test(request):
+    return render(request, 'dashboard/dash-test.html')
