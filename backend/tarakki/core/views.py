@@ -74,7 +74,7 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'landing/signup.html', {'form': form})
 
-# @login_required(login_url='/signin')
+@login_required(login_url='/signin')
 def dashboard_home(request):
     # Generate random data using plain Python
     days = [datetime(2024, 1, 1) + timedelta(days=i) for i in range(30)]
