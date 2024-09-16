@@ -8,7 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://unpkg.com/htmx.org@2.0.2"></script>
     {%load static%}
-    <link rel="stylesheet" href="{% static 'css/aptitude_test.css' %}" type="text/css">
+    {% block head%}
+    {% endblock %}
 
 </head>
 <body class="bg-white">

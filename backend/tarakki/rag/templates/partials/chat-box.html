@@ -1,4 +1,9 @@
 <div>
-    <p><strong>You:</strong> {{ user_input }}</p>
-        <p><strong>Bot:</strong> {{ bot_response }}</p>
-</div>    
+  <div class="chat chat-end">
+    <div class="chat-bubble">{{ user_input }}</div>
+  </div>
+
+  <div class="chat chat-start">
+    <div class="chat-bubble">{{ bot_response }}</div>
+  </div>
+</div>

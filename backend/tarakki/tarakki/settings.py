@@ -85,18 +85,18 @@ WSGI_APPLICATION = 'tarakki.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 DATABASES = {
      'default': {
-    # 'ENGINE': 'django.db.backends.postgresql',
-    # 'NAME': getenv('PGDATABASE'),
-    # 'USER': getenv('PGUSER'),
-    # 'PASSWORD': getenv('PGPASSWORD'),
-    # 'HOST': getenv('PGHOST'),
-    # 'PORT': getenv('PGPORT', 5432),
-    # 'OPTIONS': {
-    #   'sslmode': 'require',
-    # },
-    # 'DISABLE_SERVER_SIDE_CURSORS': True,
-    'ENGINE': 'django.db.backends.sqlite3',  # SQLite engine
-    'NAME': BASE_DIR / 'db.sqlite3',         # Path to the SQLite database file
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': getenv('PGDATABASE'),
+    'USER': getenv('PGUSER'),
+    'PASSWORD': getenv('PGPASSWORD'),
+    'HOST': getenv('PGHOST'),
+    'PORT': getenv('PGPORT', 5432),
+    'OPTIONS': {
+      'sslmode': 'require',
+    },
+    'DISABLE_SERVER_SIDE_CURSORS': True,
+    # 'ENGINE': 'django.db.backends.sqlite3',  # SQLite engine
+    # 'NAME': BASE_DIR / 'db.sqlite3',         # Path to the SQLite database file
 
   }
 }
