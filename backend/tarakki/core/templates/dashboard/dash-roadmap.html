@@ -3,10 +3,11 @@
   class="p-6 px-8 rounded-lg bg-gradient-to-b from-gray-200/20 via-gray-300 to-[#64748b]/20"
 >
   <h1 class="font-bold text-[30px]">RoadMap</h1>
+  <div class="font-semibold text-gray-600 mt-100">Detailed RoadMap for a {{request.GET.career}}</div>
   <div class="relative max-w-[1200px] mx-auto after:content-[''] after:w-[6px] after:h-[100%]  after:top-0 after:left-[50%] after:bg-white after:absolute after:mx-3">
     {% for item in items %}
     <div class="flex px-[10px] py-[20px] w-full {% if forloop.counter|divisibleby:2 %}flex-row-reverse ml-8{% else %}flex-row{% endif %}">
-      <div class="w-[50%]  px-[40px] py-[30px] rounded-lg bg-white text-[15px] relative flex flex-col gap-4 bg-purple-600/60 backdrop-blur-xl shadow-lg border border-white/30">
+      <div class="w-[50%]  px-[40px] py-[30px] rounded-lg bg-white text-[15px] relative flex flex-col gap-4 bg-gray-200 backdrop-blur-xl shadow-lg border border-white/30">
         <h2 class="font-bold text-[20px]">{{ item.title }}</h2>
         <p>{{ item.description }}</p>
         <button class="btn btn-sm self-start" onclick="document.getElementById('modal_{{ forloop.counter }}').showModal()">More Details</button>
