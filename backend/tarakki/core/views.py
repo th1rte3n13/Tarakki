@@ -19,9 +19,15 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
 import json
+from django.views.decorators.csrf import csrf_exempt
 import google.generativeai as genai
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 import json
+import joblib
+
+loaded_mlp = joblib.load('mlp_model.pkl')
+scaler = joblib.load('scaler.pkl')
+label_encoder = joblib.load('label_encoder.pkl')
 logger = logging.getLogger(__name__)
 
 import plotly.express as px
@@ -176,31 +182,48 @@ def validate_option(option,options):
     # valid_options = ["A", "B", "C", "D"]
     return option in options
 
-def calculate_score(answers, correct_options, options):
+def calculate_score(answers, correct_options, parameter, options):
     logger.info(f'Answers: {answers}, Correct Options: {correct_options}, Options: {options}')
 
-    if any(not validate_option(answer, options) for answer in answers) or any(not validate_option(correct_option, options) for correct_option in correct_options):
-        logger.error(f'Invalid option detected - Answers: {answers}, Correct Options: {correct_options}')
-        raise ValidationError('Invalid answer or correct option')
+    # score = 0
+    # score_map = {
+    #     "A": {"A": 1, "B": 0.75, "C": 0.5, "D": 0.25},
+    #     "B": {"A": 0.25, "B": 1, "C": 0.75, "D": 0.5},
+    #     "C": {"A": 0.25, "B": 0.5, "C": 1, "D": 0.75},
+    #     "D": {"A": 0.25, "B": 0.5, "C": 0.75, "D": 1}
+    # }
+    # for answer, correct_option in zip(answers, correct_options):
+    #     if answer is None:
+    #         score+=0
 
+    # for answer, correct_option in zip(answers, correct_options):
+    #     if options == ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"]:
+    #         score += score_map.get(correct_option, {}).get(answer, 0)
+    #     else:
+    #         score += 1 if answer == correct_option else 0
+
+    # return score 
+    use_score_map = parameter in ['O_score', 'C_score', 'E_score', 'A_score', 'N_score']
     score = 0
-    score_map = {
-        "A": {"A": 1, "B": 0.75, "C": 0.5, "D": 0.25},
-        "B": {"A": 0.25, "B": 1, "C": 0.75, "D": 0.5},
-        "C": {"A": 0.25, "B": 0.5, "C": 1, "D": 0.75},
-        "D": {"A": 0.25, "B": 0.5, "C": 0.75, "D": 1}
-    }
-    for answer, correct_option in zip(answers, correct_options):
-        if answer is None:
-            continue  # Skip scoring for unanswered questions
-
-    for answer, correct_option in zip(answers, correct_options):
-        if options == ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"]:
+    
+    if use_score_map:
+        score_map = {
+            "A": {"A": 1, "B": 0.75, "C": 0.5, "D": 0.25},
+            "B": {"A": 0.25, "B": 1, "C": 0.75, "D": 0.5},
+            "C": {"A": 0.25, "B": 0.5, "C": 1, "D": 0.75},
+            "D": {"A": 0.25, "B": 0.5, "C": 0.75, "D": 1}
+        }
+        for answer, correct_option in zip(answers, correct_options):
+            if answer is None:
+                score+=0
             score += score_map.get(correct_option, {}).get(answer, 0)
-        else:
+    else:
+        for answer, correct_option in zip(answers, correct_options):
+            if answer is None:
+                score+=0
             score += 1 if answer == correct_option else 0
 
-    return score  # Only return the score for this parameter
+    return score
 
 
 def submit_test(request):
@@ -231,7 +254,11 @@ def submit_test(request):
         for i, question in enumerate(questions):
             param = question['parameter']
             correct_options_by_param[param].append(question['correct_option'])
-            answers_by_param[param].append(answers[i])
+            # answers_by_param[param].append(answers[i])
+            if i < len(answers):
+                answers_by_param[param].append(answers[i])
+            else:
+                answers_by_param[param].append(None)
 
         print("Answers by parameter: ",answers_by_param)
         print("Correct option by parameter: ",correct_options_by_param)
@@ -240,7 +267,8 @@ def submit_test(request):
             scores[param] = calculate_score(
                 answers_by_param[param],
                 correct_options_by_param[param],
-                ["A", "B", "C", "D"]
+                param,
+                ["A", "B", "C", "D","None"]
             )
         print("Scores: ",scores)
         qualities = determine_qualities(scores)
@@ -319,3 +347,41 @@ def determine_qualities(scores):
 
 def dashboard_test(request):
     return render(request, 'dashboard/dash-test.html')
+
+def get_scores(user):
+    try:
+        # Fetch the student profile for the given user
+        profile = StudentProfile.objects.get(user=user)
+        # Retrieve the scores field from the profile
+        scores_array = profile.scores
+        return scores_array
+    except StudentProfile.DoesNotExist:
+        # If the profile does not exist, return an empty array or handle the error accordingly
+        return []
+    
+def makeprediction(user):
+    # Get scores from the student's profile
+    scores_array = get_scores(user)
+
+    # Check if the scores exist
+    if scores_array is None:
+        return "No scores available for this user."
+
+    try:
+        # Ensure the input matches the model's expected format
+        sample_input = [scores_array]
+
+        # Scale the input using the same scaler used during training
+        sample_input_scaled = scaler.transform(sample_input)
+
+        # Make the prediction
+        predicted_career = loaded_mlp.predict(sample_input_scaled)
+
+        # Decode the predicted label back to the original class
+        predicted_career_label = label_encoder.inverse_transform(predicted_career)
+
+        # Return the predicted career
+        return f'Predicted Career: {predicted_career_label[0]}'
+    except Exception as e:
+        return f"Error in prediction: {str(e)}"
+    
