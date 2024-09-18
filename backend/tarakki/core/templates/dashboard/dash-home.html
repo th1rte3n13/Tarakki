@@ -2,7 +2,15 @@
 
 {% block content %}
 <div class="bg-white p-6  rounded-lg">
-    <div class="text-gray-600 text-lg font-semibold">Welcome, Melbin</div>
-    {{chart | safe}}
+    <div class="text-gray-600 text-lg font-semibold">Welcome, {{request.user.username}}</div>
+    <div class="font text-[18px]">Summary of the Aptutude Tests and Career Prediction</div>
+    <div class="flex gap-4 ml-3 mt-3">
+        {{chart | safe}}
+        {{pie_chart | safe}}
+
+    </div>
+    <div class="flex justify-center">
+        {{scatter_chart | safe}}
+    </div>
 </div>
 {% endblock %}
