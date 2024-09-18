@@ -5,28 +5,25 @@
   <h1 class="font-bold text-[30px]">RoadMap</h1>
   <div class="relative max-w-[1200px] mx-auto after:content-[''] after:w-[6px] after:h-[100%]  after:top-0 after:left-[50%] after:bg-white after:absolute after:mx-3">
     {% for item in items %}
-    <div
-      class="flex px-[10px] py-[20px] w-full {% if forloop.counter|divisibleby:2 %}flex-row-reverse ml-8{% else %}flex-row{% endif %}"
-      
-    >
-      <div
-        class="w-[50%] bg-gray-300 px-[40px] py-[30px] rounded-lg bg-white text-[15px] relative flex flex-col gap-4" 
-      >
-<!--       
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 absolute w-[40px]  top-[20px] z-10  {% if forloop.counter|divisibleby:2 %}left-[-40px]{% else %}right-[-35px]{% endif %} size-8">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
-      </svg> -->
-      
-      
-
+    <div class="flex px-[10px] py-[20px] w-full {% if forloop.counter|divisibleby:2 %}flex-row-reverse ml-8{% else %}flex-row{% endif %}">
+      <div class="w-[50%] bg-white px-[40px] py-[30px] rounded-lg bg-white text-[15px] relative flex flex-col gap-4">
         <h2 class="font-bold text-[20px]">{{ item.title }}</h2>
         <p>{{ item.description }}</p>
-        <button class="btn btn-sm self-start" onclick="my_modal_4.showModal()">More Details</button>
+        <button class="btn btn-sm self-start" onclick="document.getElementById('modal_{{ forloop.counter }}').showModal()">More Details</button>
       </div>
-      <dialog id="my_modal_4" class="modal">
+      <dialog id="modal_{{ forloop.counter }}" class="modal">
         <div class="modal-box w-[800px] max-w-5xl">
-          <h3 class="text-lg font-bold">Detailed information</h3>
-          <p class="py-4">Detailed information about the roadmap and the steps you shuld take at this point</p>
+          <h3 class="text-xl font-bold">{{item.title}}</h3>
+          <div class="flex flex-col gap-4 mt-4">
+            {% for subitem in item.steps%}
+            <div>
+              <p class="font-semibold">{{subitem.title}}</p>
+              <p>{{subitem.description}}</p>
+
+            </div>
+            {% endfor %}
+
+          </div>
           <div class="modal-action">
             <form method="dialog">
               <!-- if there is a button, it will close the modal -->

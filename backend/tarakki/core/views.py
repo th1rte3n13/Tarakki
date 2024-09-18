@@ -19,8 +19,9 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
 import json
-from django.views.decorators.csrf import csrf_exempt
-
+import google.generativeai as genai
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+import json
 logger = logging.getLogger(__name__)
 
 import plotly.express as px
@@ -74,7 +75,7 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'landing/signup.html', {'form': form})
 
-@login_required(login_url='/signin')
+# @login_required(login_url='/signin')
 def dashboard_home(request):
     # Generate random data using plain Python
     days = [datetime(2024, 1, 1) + timedelta(days=i) for i in range(30)]
@@ -92,30 +93,37 @@ def dashboard_home(request):
     return render(request, 'dashboard/dash-home.html',context)
 
 def dashboard_roadmap(request):
-    context = {'items':[
-    {
-        'title': 'Alpha Corp',
-        'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla fermentum, turpis ac vestibulum aliquam, lacus felis.'
-    },
-    {
-        'title': 'Beta LLC',
-        'description': 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.'
-    },
-    {
-        'title': 'Gamma Inc',
-        'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
-    },
-    {
-        'title': 'Gamma Inc',
-        'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
-    },
-    {
-        'title': 'Gamma Inc',
-        'description': 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.'
-    }
-]
-}
-    return render(request, 'dashboard/dash-roadmap.html',context)
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    prompt = (
+        "Generate Roadmap for a student who wants to pursue a career in Biologist"
+        "in India, starting from 10th grade to graduation and add steps like subjects, skills, "
+        "and extracurricular activities. Also suggests collegese and courses to pursue and the approximate cost for the education and duration. It should be in an array of Python dictionaries, "
+        "each containing 'title', 'description', and a 'steps' field breaking down the "
+        "description into further 'steps' in detail with array of dictionary 'title' and 'decription'.The description should be in detail for each steps.Strictly follow the format. The initial key should be 'roadmap' which contains the array. IMPORTANT: The output should be a valid JSON file. Don't use markdown formatting"
+    )
+
+    response = model.generate_content(prompt)
+    print(response.text)
+
+    try:
+        # Remove the triple backticks and any leading/trailing spaces
+        cleaned_response = response.text.strip('```json').strip('```').strip()
+        
+        # Parse the JSON response
+        parsed_data = json.loads(cleaned_response)
+        
+        # Extract the roadmap content
+        items = parsed_data.get('roadmap', [])  # Extract 'roadmap' key if it exists
+        
+    except json.JSONDecodeError as e:
+        print(f"Error parsing JSON: {e}")
+        items = []  # Fallback in case of parsing failure
+
+    # Prepare context for rendering
+    context = {'items': items}
+    print(context)
+
+    return render(request, 'dashboard/dash-roadmap.html', context)
 
 def dashboard_settings(request):
     return render(request, 'dashboard/settings.html')
