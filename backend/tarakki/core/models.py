@@ -66,8 +66,8 @@ class User(AbstractBaseUser):
 
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    course = models.CharField(max_length=100)  # Example field
-    grade = models.CharField(max_length=5)
+    prediction = models.CharField(max_length=100,null=True)  
+    scores = models.JSONField(null=True)
 
     def __str__(self):
         return self.user.username
