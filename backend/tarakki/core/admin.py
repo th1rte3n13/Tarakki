@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, StudentProfile
+from .models import User, StudentProfile, Profession, MentorProfile, TestResults
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('email', 'username', 'user_type', 'is_admin')
@@ -24,3 +24,6 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(StudentProfile)
+admin.site.register(TestResults)
+admin.site.register(Profession)
+admin.site.register(MentorProfile)
