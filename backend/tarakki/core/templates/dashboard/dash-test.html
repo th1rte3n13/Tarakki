@@ -172,10 +172,12 @@
 
         function displayQuestions(questions) {
         const questionsContainer = document.getElementById('questions-container'); // Ensure this is the correct ID
+        let globalQuestionNumber = 1; // Initialize global question number
 
         let questionsByParameter = {}; // To group questions by parameter
 
         // Group questions by their parameter
+        // questions.forEach((q,index) => {
         questions.forEach((q) => {
             const parameter = q.parameter.trim(); // Remove leading/trailing whitespace
             
@@ -220,11 +222,11 @@
                     currentQuestionsDiv.style.display = 'none';
                 }
             });
-
+            
             // Iterate over the questions for the current parameter
             questionsByParameter[parameter].forEach((q, index) => {
                 // Use index + 1 for question numbering per parameter
-                const questionNumber = index + 1;
+                const questionNumber = globalQuestionNumber++;
 
                 // Create and append the question div
                 const questionDiv = document.createElement('div');
@@ -233,10 +235,10 @@
                     <h3>Question ${questionNumber}</h3>
                     <p>${q.question_text}</p>
                     <ul class="options">
-                        <li><label><input type="radio" name="question-${parameter}-${questionNumber}" value="A" onclick="saveAnswer(${q.id}, 'A')"> ${q.option_a}</label></li>
-                        <li><label><input type="radio" name="question-${parameter}-${questionNumber}" value="B" onclick="saveAnswer(${q.id}, 'B')"> ${q.option_b}</label></li>
-                        <li><label><input type="radio" name="question-${parameter}-${questionNumber}" value="C" onclick="saveAnswer(${q.id}, 'C')"> ${q.option_c}</label></li>
-                        <li><label><input type="radio" name="question-${parameter}-${questionNumber}" value="D" onclick="saveAnswer(${q.id}, 'D')"> ${q.option_d}</label></li>
+                        <li><label><input type="radio" name="question-${questionNumber}" value="A" onclick="saveAnswer(${questionNumber}, 'A')"> ${q.option_a}</label></li>
+                        <li><label><input type="radio" name="question-${questionNumber}" value="B" onclick="saveAnswer(${questionNumber}, 'B')"> ${q.option_b}</label></li>
+                        <li><label><input type="radio" name="question-${questionNumber}" value="C" onclick="saveAnswer(${questionNumber}, 'C')"> ${q.option_c}</label></li>
+                        <li><label><input type="radio" name="question-${questionNumber}" value="D" onclick="saveAnswer(${questionNumber}, 'D')"> ${q.option_d}</label></li>
                     </ul>
                 `;
 
