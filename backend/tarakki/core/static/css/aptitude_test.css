@@ -1,4 +1,11 @@
 /* General Styles */
+.questions-container {
+    display: none; /* Hide questions by default */
+}
+
+.parameter-header {
+    cursor: pointer;
+}
 * {
     box-sizing: border-box;
     margin: 0;
