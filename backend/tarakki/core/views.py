@@ -24,6 +24,7 @@ import google.generativeai as genai
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 import json
 import joblib
+import pandas as pd
 
 loaded_mlp = joblib.load('mlp_model.pkl')
 scaler = joblib.load('scaler.pkl')
@@ -94,42 +95,78 @@ def dashboard_home(request):
         title="Random Temperature Data over 30 Days",
         labels={"x": "Date", "y": "Temperature (°C)"}
     )
-    chart = fig.to_html(full_html=False, default_height=500, default_width=700)
-    context = {'chart': chart}
+    chart = fig.to_html(full_html=False, default_height=500, default_width=600)
+
+    #pie chart
+    data = {
+    'section': ['Math', 'English', 'Reasoning', 'General Knowledge', 'Computer Science',
+                'Logical Thinking', 'Data Interpretation', 'Quantitative Aptitude', 
+                'Verbal Ability', 'Non-Verbal Reasoning'],
+    'score': [85, 75, 90, 65, 80, 88, 77, 92, 84, 70],
+    'time_allocated': [30, 25, 35, 20, 30, 30, 30, 40, 35, 25]  # Example of custom data
+}
+    df = pd.DataFrame(data)
+    fig = px.pie(df, values='score', names='section',
+             title='Aptitude Test Scores',
+             hover_data=['time_allocated'], labels={'time_allocated': 'Time Allocated (min)'})
+    pie_chart = fig.to_html(full_html=False, default_height=500, default_width=600)
+
+    skill_data = {
+    'Skill': ['Coding', 'Problem Solving', 'Communication', 'Teamwork', 'Creativity', 'Attention to Detail'],
+    'Proficiency': [85, 90, 75, 80, 70, 88]
+}
+    df = pd.DataFrame(skill_data)
+    fig = px.line_polar(df, r='Proficiency', theta='Skill', line_close=True, title="Skill Proficiency Radar Chart")
+    radar_chart = fig.to_html(full_html=False, default_height=500, default_width=500)
+
+    career_fit_data = {
+    'Career': ['Data Scientist', 'Financial Analyst', 'Software Engineer', 'Marketing Specialist', 'Graphic Designer'],
+    'Fit Score': [90, 85, 88, 75, 70]
+}
+    df = pd.DataFrame(career_fit_data)
+    fig = px.bar(df, x='Career', y='Fit Score', title="Career Fit Based on Aptitude Test")
+    bar_chart = fig.to_html(full_html=False, default_height=500, default_width=600)
+
+    context = {'chart': radar_chart,"pie_chart":pie_chart,"bar_chart":bar_chart}
     return render(request, 'dashboard/dash-home.html',context)
 
 def dashboard_roadmap(request):
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    prompt = (
-        "Generate Roadmap for a student who wants to pursue a career in Biologist"
-        "in India, starting from 10th grade to graduation and add steps like subjects, skills, "
-        "and extracurricular activities. Also suggests colleges and courses to pursue and the approximate cost for the education and duration. It should be in an array of Python dictionaries, "
-        "each containing 'title', 'description', and a 'steps' field breaking down the "
-        "description into further 'steps' in detail with array of dictionary 'title' and 'decription'.The description should be in detail for each steps.Strictly follow the format. The initial key should be 'roadmap' which contains the array. IMPORTANT: The output should be a valid JSON file. Don't use markdown formatting"
-    )
+    career = request.GET.get('career', None)
+    print(career)
+    if career:
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        prompt = (
+            f"Generate Roadmap for a student who wants to pursue a career in {career}"
+            "in India, starting from 10th grade to graduation and add steps like subjects, skills, "
+            "and extracurricular activities. Also suggests collegese and courses to pursue and the approximate cost for the education and duration. It should be in an array of Python dictionaries, "
+            "each containing 'title', 'description', and a 'steps' field breaking down the "
+            "description into further 'steps' in detail with array of dictionary 'title' and 'decription'.The description should be in detail for each steps.Strictly follow the format. The initial key should be 'roadmap' which contains the array. IMPORTANT: The output should be a valid JSON file. Don't use markdown formatting"
+        )
 
-    response = model.generate_content(prompt)
-    print(response.text)
+        response = model.generate_content(prompt)
+        print(response.text)
 
-    try:
-        # Remove the triple backticks and any leading/trailing spaces
-        cleaned_response = response.text.strip('```json').strip('```').strip()
-        
-        # Parse the JSON response
-        parsed_data = json.loads(cleaned_response)
-        
-        # Extract the roadmap content
-        items = parsed_data.get('roadmap', [])  # Extract 'roadmap' key if it exists
-        
-    except json.JSONDecodeError as e:
-        print(f"Error parsing JSON: {e}")
-        items = []  # Fallback in case of parsing failure
+        try:
+            # Remove the triple backticks and any leading/trailing spaces
+            cleaned_response = response.text.strip('```json').strip('```').strip()
+            
+            # Parse the JSON response
+            parsed_data = json.loads(cleaned_response)
+            
+            # Extract the roadmap content
+            items = parsed_data.get('roadmap', [])  # Extract 'roadmap' key if it exists
+            
+        except json.JSONDecodeError as e:
+            print(f"Error parsing JSON: {e}")
+            items = []  # Fallback in case of parsing failure
 
-    # Prepare context for rendering
-    context = {'items': items}
-    print(context)
+        # Prepare context for rendering
+        context = {'items': items}
+        print(context)
 
-    return render(request, 'dashboard/dash-roadmap.html', context)
+        return render(request, 'dashboard/dash-roadmap.html', context)
+    else:
+        return render(request, 'dashboard/roadmap-empty.html')
 
 def dashboard_settings(request):
     return render(request, 'dashboard/settings.html')
