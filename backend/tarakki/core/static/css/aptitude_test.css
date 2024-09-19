@@ -1,4 +1,11 @@
 /* General Styles */
+.questions-container {
+    display: none; /* Hide questions by default */
+}
+
+.parameter-header {
+    cursor: pointer;
+}
 * {
     box-sizing: border-box;
     margin: 0;
@@ -65,7 +72,7 @@ h1 {
     font-weight: 700;
 }
 
-h2, h3 {
+h2, h3{
     color: #555;
     font-weight: 600;
 }
