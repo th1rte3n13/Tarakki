@@ -8,11 +8,11 @@
 
 {% block content %}
 <div class="container" id="test-container">
-    <h1>Aptitude Test</h1>
+    <h1 style="font-weight: bold; font-size: 2.5em;">Aptitude Test</h1>
     <div id="timer-container">
         <h2>Time Left: <span id="timer">20:00</span></h2>
     </div>
-
+    <div id="parameter"></div>
     <div id="questions-container">
         <!-- Questions will be dynamically inserted here -->
     </div>
@@ -110,12 +110,32 @@
     function displayQuestions(questions) {
         const questionsContainer = document.getElementById('questions-container');
         questionsContainer.innerHTML = '';
-        
+        let lastParameter = null;  // Track the last parameter displayed
+
         questions.forEach((q, index) => {
+            // Check if the current parameter is different from the last one
+            if (q.parameter !== lastParameter) {
+                // Display the parameter only if it's different from the previous one
+                const parameterDiv = document.createElement('div');
+                parameterDiv.className = 'parameter-header';
+                parameterDiv.innerHTML = `<h3>Parameter: ${q.parameter}</h3>`;
+                questionsContainer.appendChild(parameterDiv);
+                parameterDiv.style.backgroundColor = '#f0f0f0';
+                parameterDiv.style.borderLeft = '5px solid #4CAF50';
+                parameterDiv.style.padding = '10px 20px';
+                parameterDiv.style.margin = '20px 0';
+                parameterDiv.style.fontSize = '1.2em';
+                parameterDiv.style.color = '#333';
+                parameterDiv.style.fontWeight = 'bold';
+                // Update the lastParameter to the current one
+                lastParameter = q.parameter;
+            }
+
+            // Display the question as usual
             const questionDiv = document.createElement('div');
             questionDiv.className = 'question';
             questionDiv.innerHTML = `
-                <h3>Question ${index + 1}</h3>
+                <h4>Question ${index + 1}</h4>
                 <p>${q.question_text}</p>
                 <ul class="options">
                     <li><label><input type="radio" name="question-${index}" value="A" onclick="saveAnswer(${index}, 'A')"> ${q.option_a}</label></li>
@@ -190,11 +210,12 @@
                 scoresHtml += `
                     <li style="list-style: none; margin-bottom: 10px;">
                         <span style="display: inline-block; width: 12px; height: 12px; background-color: ${colors[index]}; border-radius: 50%; margin-right: 10px;"></span>
-                        ${parameter}: ${score}
+                        ${parameter}: ${score}/10
                     </li>`;
             });
-
-            scoresHtml += `<li>Total Marks: ${Object.values(data.scores).reduce((a, b) => a + b, 0)}</li></ul>`;
+            const totalMarks = Object.values(data.scores).reduce((a, b) => a + b, 0);
+            // scoresHtml += `<li>Total Marks: ${Object.values(data.scores).reduce((a, b) => a + b, 0)}</li></ul>`;
+            scoresHtml += `<li>Total Marks: ${totalMarks}/100</li></ul>`;
             scoresContainer.innerHTML = scoresHtml;
 
             // Custom Chart.js Configuration
