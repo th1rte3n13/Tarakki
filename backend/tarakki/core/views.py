@@ -113,7 +113,7 @@ def dashboard_home(request):
 
     skill_data = {
     'Skill': ['Coding', 'Problem Solving', 'Communication', 'Teamwork', 'Creativity', 'Attention to Detail'],
-    'Proficiency': [85, 90, 75, 80, 70, 88]
+    'Proficiency': [85, 90, 75, 80, 60, 88]
 }
     df = pd.DataFrame(skill_data)
     fig = px.line_polar(df, r='Proficiency', theta='Skill', line_close=True, title="Skill Proficiency Radar Chart")
