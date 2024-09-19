@@ -103,7 +103,7 @@ def dashboard_roadmap(request):
     prompt = (
         "Generate Roadmap for a student who wants to pursue a career in Biologist"
         "in India, starting from 10th grade to graduation and add steps like subjects, skills, "
-        "and extracurricular activities. Also suggests collegese and courses to pursue and the approximate cost for the education and duration. It should be in an array of Python dictionaries, "
+        "and extracurricular activities. Also suggests colleges and courses to pursue and the approximate cost for the education and duration. It should be in an array of Python dictionaries, "
         "each containing 'title', 'description', and a 'steps' field breaking down the "
         "description into further 'steps' in detail with array of dictionary 'title' and 'decription'.The description should be in detail for each steps.Strictly follow the format. The initial key should be 'roadmap' which contains the array. IMPORTANT: The output should be a valid JSON file. Don't use markdown formatting"
     )
