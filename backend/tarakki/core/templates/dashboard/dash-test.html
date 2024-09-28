@@ -9,9 +9,40 @@
 {% block content %}
 <div class="container" id="test-container">
     <h1 style="font-weight: bold; font-size: 2.5em;">Aptitude Test</h1>
-    <!-- <div id="instructions-container" style="margin-top: 20px; font-size: 1.1em;"></div>
-        <h2 style="font-size: 1.5em;">Instructions</h2> -->
-    <div id="timer-container">
+    <div id="instructions-container" style="margin-top: 20px; font-size: 1.1em;">
+        <h2 style="font-size: 1.5em;">Instructions</h2>
+        <p><strong>Purpose:</strong> This test evaluates various aptitude parameters to help you understand your strengths and areas of improvement.</p>
+        <p><strong>Duration:</strong> The test will take approximately 20 minutes to complete. A timer starts at the top-right. Once the time ends your test will be automatically submitted.</p>
+        <p><strong>How to Navigate:</strong></p>
+        <ul>
+            <li>Click on a parameter name (e.g., "O_score") to view the related questions.</li>
+            <li>Questions will appear under each parameter once you click on it.</li>
+        </ul>
+        <p><strong>Marking Scheme:</strong></p>
+        <ul>
+            <li>All parameters have 10 questions associated with it. Since there are 10 parameters there are total 100 questions.</li>
+            <li>Each question has 1 mark. The test is of 100 marks (there is no negative marking).</li>
+            <li>Questions under the parameter O_score, C_score, E_score, A_score, N_score are behavioural questions. There are no correct/wrong answers for such questions.</li>
+        </ul>
+        <p><strong>Answering Questions:</strong></p>
+        <ul>
+            <li>Select your answer by clicking the radio button next to your chosen option (A, B, C, or D).</li>
+            <li>You can change your answer by just selecting on the desired option.</li>
+        </ul>
+        <p><strong>Completion:</strong></p>
+        <ul>
+            <li>Make sure to complete all questions before submission. Your answers will be saved automatically.</li>
+        </ul>
+        <p><strong>Results:</strong></p>
+        <ul>
+            <li>After completing the test, you’ll be able to view your results and detailed feedback on the results page.</li>
+        </ul>
+        <p><strong>Support:</strong></p>
+        <ul>
+            <li>For any issues or questions, please contact our support team or visit the help section.</li>
+        </ul>
+    </div>
+    <div id="timer-container" style="text-align: center !important;">
         <h2>Time Left: <span id="timer">20:00</span></h2>
     </div>
     <div id="parameter"></div>
@@ -47,9 +78,10 @@
         <p><strong>Abstract Reasoning:</strong> Ability to analyze complex problems and patterns.</p>
         <p><strong>Verbal Reasoning:</strong> Ability to understand and reason using concepts framed in words.</p>
     </div>
+    <h1 >Your Qualities</h1>
     <div id="pie">
-        <h1>Your Qualities</h1>
-        <canvas id="qualities-pie-chart"></canvas>
+        
+        <canvas id="qualities-pie-chart" class="chart"></canvas>
     </div>
 </div>
 
@@ -302,24 +334,41 @@
         (B < 255 ? (B < 1 ? 0 : B) : 255)).toString(16).slice(1).toUpperCase()}`;
 }
 
-    const scoresContainer = document.getElementById('scores-container');
-            let scoresHtml = '<h3></h3><ul>';
+        const scoresContainer = document.getElementById('scores-container');
+
+            // Define colors for each score parameter
             const colors = [
                 '#e57373', '#64b5f6', '#ba68c8', '#ffb74d', '#ef5350',
                 '#4db6ac', '#9575cd', '#ff8a65', '#ffd54f', '#81c784'
             ];
 
+            // Start building the table
+            let scoresHtml = '<table style="width: 100%; border-collapse: collapse;">';
+            scoresHtml += '<tr>'; // Start the first row
+
             Object.entries(data.scores).forEach(([parameter, score], index) => {
+                if (index % 3 === 0 && index !== 0) {
+                    scoresHtml += '</tr><tr>'; // End the current row and start a new one
+                }
+
+                // Add a table cell for each score
                 scoresHtml += `
-                    <li style="list-style: none; margin-bottom: 10px;">
+                    <td style="padding: 10px; border: 1px solid #ddd;">
                         <span style="display: inline-block; width: 12px; height: 12px; background-color: ${colors[index]}; border-radius: 50%; margin-right: 10px;"></span>
                         ${parameter}: ${score}/10
-                    </li>`;
+                    </td>`;
             });
+
+            // Add the total marks to the last row
             const totalMarks = Object.values(data.scores).reduce((a, b) => a + b, 0);
-            // scoresHtml += `<li>Total Marks: ${Object.values(data.scores).reduce((a, b) => a + b, 0)}</li></ul>`;
-            scoresHtml += `<li>Total Marks: ${totalMarks}/100</li></ul>`;
+            scoresHtml += `<tr><td colspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center;">Total Marks: ${totalMarks}/100</td></tr>`;
+
+            // Close the table
+            scoresHtml += '</table>';
+
+            // Insert the generated HTML into the container
             scoresContainer.innerHTML = scoresHtml;
+
 
             // Custom Chart.js Configuration
             const chartConfig = {
@@ -367,6 +416,8 @@
             const dataPoints = labels.map(label => qualityCounts[label]);
 
             const ctx1 = document.getElementById('qualities-pie-chart').getContext('2d');
+            ctx1.width=400;
+            ctx1.height = 400;
             new Chart(ctx1, {
                 type: 'pie',
                 data: {
