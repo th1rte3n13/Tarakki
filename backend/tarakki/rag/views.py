@@ -12,7 +12,7 @@ def chat(request):
     if request.method == 'POST':
         user_input = request.POST.get('user_input')
         model = genai.GenerativeModel("gemini-1.5-flash")
-        response = model.generate_content(user_input)
+        response = model.generate_content('you are a career counsellign bot for based in india and now answer this question: '+user_input)
         bot_response = response.text
 
 

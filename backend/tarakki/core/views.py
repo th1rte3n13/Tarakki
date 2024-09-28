@@ -85,6 +85,8 @@ def signup(request):
 # @login_required(login_url='/signin')
 def dashboard_home(request):
     # Generate random data using plain Python
+    prediction = makeprediction(request.user)
+    print(prediction)
     days = [datetime(2024, 1, 1) + timedelta(days=i) for i in range(30)]
     temperatures = [random.randint(20, 35) for _ in range(30)]
 
@@ -383,6 +385,7 @@ def determine_qualities(scores):
 
 
 def dashboard_test(request):
+ 
     return render(request, 'dashboard/dash-test.html')
 
 def get_scores(user):
@@ -422,3 +425,9 @@ def makeprediction(user):
     except Exception as e:
         return f"Error in prediction: {str(e)}"
     
+
+def interest(request):
+    if request.method == 'POST':
+        print("hello")
+    else:
+        return render(request, 'dashboard/dash-interest.html')

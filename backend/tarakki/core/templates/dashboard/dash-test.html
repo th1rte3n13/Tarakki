@@ -9,38 +9,58 @@
 {% block content %}
 <div class="container" id="test-container">
     <h1 style="font-weight: bold; font-size: 2.5em;">Aptitude Test</h1>
-    <div id="instructions-container" style="margin-top: 20px; font-size: 1.1em;">
-        <h2 style="font-size: 1.5em;">Instructions</h2>
-        <p><strong>Purpose:</strong> This test evaluates various aptitude parameters to help you understand your strengths and areas of improvement.</p>
-        <p><strong>Duration:</strong> The test will take approximately 20 minutes to complete. A timer starts at the top-right. Once the time ends your test will be automatically submitted.</p>
-        <p><strong>How to Navigate:</strong></p>
-        <ul>
-            <li>Click on a parameter name (e.g., "O_score") to view the related questions.</li>
-            <li>Questions will appear under each parameter once you click on it.</li>
-        </ul>
-        <p><strong>Marking Scheme:</strong></p>
-        <ul>
-            <li>All parameters have 10 questions associated with it. Since there are 10 parameters there are total 100 questions.</li>
-            <li>Each question has 1 mark. The test is of 100 marks (there is no negative marking).</li>
-            <li>Questions under the parameter O_score, C_score, E_score, A_score, N_score are behavioural questions. There are no correct/wrong answers for such questions.</li>
-        </ul>
-        <p><strong>Answering Questions:</strong></p>
-        <ul>
-            <li>Select your answer by clicking the radio button next to your chosen option (A, B, C, or D).</li>
-            <li>You can change your answer by just selecting on the desired option.</li>
-        </ul>
-        <p><strong>Completion:</strong></p>
-        <ul>
-            <li>Make sure to complete all questions before submission. Your answers will be saved automatically.</li>
-        </ul>
-        <p><strong>Results:</strong></p>
-        <ul>
-            <li>After completing the test, you’ll be able to view your results and detailed feedback on the results page.</li>
-        </ul>
-        <p><strong>Support:</strong></p>
-        <ul>
-            <li>For any issues or questions, please contact our support team or visit the help section.</li>
-        </ul>
+    <div id="instructions-container" style="margin-top: 20px; font-size: 1.1em;" class="text-left">
+        <div tabindex="0" class="collapse collapse-arrow border-base-300 bg-base-200 border">
+            <div class="collapse-title text-xl font-medium">Instructions</div>
+            <div class="collapse-content flex flex-col gap-4 px-24">
+                <p><strong>Purpose:</strong> This test evaluates various aptitude parameters to help you understand your strengths and areas of improvement.</p>
+                <p><strong>Duration:</strong> The test will take approximately 20 minutes to complete. A timer starts at the top-right. Once the time ends your test will be automatically submitted.</p>
+                <div>
+                    <p><strong>How to Navigate:</strong></p>
+
+                    <ul>
+                        <li>Click on a parameter name (e.g., "O_score") to view the related questions.</li>
+                        <li>Questions will appear under each parameter once you click on it.</li>
+                    </ul>
+                </div>
+                <div>
+
+                    <p><strong>Marking Scheme:</strong></p>
+                    <ul>
+                        <li>All parameters have 10 questions associated with it. Since there are 10 parameters there are total 100 questions.</li>
+                        <li>Each question has 1 mark. The test is of 100 marks (there is no negative marking).</li>
+                        <li>Questions under the parameter O_score, C_score, E_score, A_score, N_score are behavioural questions. There are no correct/wrong answers for such questions.</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Answering Questions:</strong></p>
+                    <ul>
+                        <li>Select your answer by clicking the radio button next to your chosen option (A, B, C, or D).</li>
+                        <li>You can change your answer by just selecting on the desired option.</li>
+                    </ul>
+
+                </div>
+                <div>
+
+                    <p><strong>Completion:</strong></p>
+                    <ul>
+                        <li>Make sure to complete all questions before submission. Your answers will be saved automatically.</li>
+                    </ul>
+                    <p><strong>Results:</strong></p>
+                    <ul>
+                        <li>After completing the test, you’ll be able to view your results and detailed feedback on the results page.</li>
+                    </ul>
+                </div>
+                <div>
+
+                    <p><strong>Support:</strong></p>
+                    <ul>
+                        <li>For any issues or questions, please contact our support team or visit the help section.</li>
+                    </ul>
+                </div>
+            </div>
+          </div>
+        
     </div>
     <div id="timer-container" style="text-align: center !important;">
         <h2>Time Left: <span id="timer">20:00</span></h2>

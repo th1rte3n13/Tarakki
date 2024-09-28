@@ -11,4 +11,5 @@ urlpatterns = [
     path('test/', views.dashboard_test, name='dashboard_test'),
     path('start_test/', views.start_test, name='start_test'),   # URL for starting the test
     path('submit_test/', views.submit_test, name='submit_test'), # URL for submitting the test
+    path('interest-pred/', views.interest, name='interest'),
 ]
